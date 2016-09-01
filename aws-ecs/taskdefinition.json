@@ -1,0 +1,35 @@
+{
+  "containerDefinitions" : [
+    {
+      "environment" : [
+        {
+          "name": "SERVICE_8001_NAME",
+          "value": "smsterminator"
+        },
+        {
+          "name": "SERVICE_8001_CHECK_HTTP",
+          "value": "/deliver/ping"
+        },
+        {
+          "name": "SERVICE_8001_CHECK_INTERVAL",
+          "value": "10s"
+        },
+        {
+          "name": "SERVICE_TAGS",
+          "value": "http"
+        }
+      ],
+      "name" : "smsterminator",
+      "image" : "babtist/smsterminator:0.0.2",
+      "memory":200,
+      "portMappings":[
+        {
+          "containerPort" : 8001,
+          "hostPort" : 8001
+        }
+      ],
+      "essential":true
+    }
+  ],
+  "family":"Camp1-SmsTerminatorServiceTask"
+}

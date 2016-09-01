@@ -1,0 +1,13 @@
+{
+  "serviceName": "SmsTerminatorService",
+  "taskDefinition": "Camp1-SmsTerminatorServiceTask",
+  "loadBalancers": [
+    {
+      "targetGroupArn": "arn:aws:elasticloadbalancing:eu-west-1:571908524012:targetgroup/Terminator/99bd2bb32fae6191",
+      "containerName": "smsterminator",
+      "containerPort": 8001
+    }
+  ],
+  "desiredCount": 1,
+  "role": "/ecsServiceRole"
+}

@@ -1,0 +1,6 @@
+#!/bin/bash 
+mvn clean install
+docker build -t babtist/smsterminator:0.0.2 .
+docker push babtist/smsterminator:0.0.2
+aws ecs register-task-definition --cli-input-json file://aws-ecs/taskdefinition.json
+aws ecs update-service --cluster $1 --service SmsTerminatorService --task-definition Camp1-SmsTerminatorServiceTask

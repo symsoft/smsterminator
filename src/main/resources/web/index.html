@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
+
+    <title>SMS Terminators</title>
+    <script type="text/javascript">
+            var app = angular.module("SmsTerminator", []);
+           
+            //Controller Part  
+            app.controller("SmsTerminatorController", function($scope, $http) {
+           
+                 
+                $scope.terminators = [];
+                $scope.terminatorForm = {
+                    id : "",
+                    realm : "",
+                    successRate : ""
+
+                };  
+           
+                //Now load the data from server  
+                _refreshTerminatorData();
+
+                $scope.submitTerminator = function() {
+           
+                    var method = "";  
+                    var url = "";  
+                    if ($scope.terminatorForm.id == "") {
+                        //Id is absent in form data, it is create new terminator operation
+                        method = "POST";  
+                        url = 'terminators';
+                    } else {  
+                        //Id is present in form data, it is edit terminator operation
+                        method = "PUT";  
+                        url = 'terminators';
+                    }  
+           
+                    $http({  
+                        method : method,  
+                        url : url,  
+                        data : angular.toJson($scope.terminatorForm),
+                        headers : {  
+                            'Content-Type' : 'application/json'  
+                        }  
+                    }).then( _success, _error );  
+                };  
+           
+                $scope.deleteTerminator = function(terminator) {
+                    $http({  
+                        method : 'DELETE',  
+                        url : 'terminators/' + terminator.id
+                    }).then(_success, _error);  
+                };
+
+
+   
+                $scope.editTerminator = function(terminator) {
+                    $scope.terminatorForm.successRate = terminator.successRate;
+                    $scope.terminatorForm.id = terminator.id;
+                    $scope.terminatorForm.realm = terminator.realm;
+
+                };  
+           
+                /* Private Methods */  
+                //HTTP GET- get all terminators collection
+                function _refreshTerminatorData() {
+                    $http({  
+                        method : 'GET',  
+                        url : 'terminators'
+                    }).then(function successCallback(response) {  
+                        $scope.terminators = response.data;
+                    }, function errorCallback(response) {  
+                        console.log(response.statusText);  
+                    });  
+                }  
+           
+                function _success(response) {  
+                    _refreshTerminatorData();
+                    _clearFormData()  
+                }  
+           
+                function _error(response) {  
+                    console.log(response.statusText);  
+                }  
+           
+                //Clear the form  
+                function _clearFormData() {  
+                    $scope.terminatorForm.id = "";
+                    $scope.terminatorForm.realm = "";
+                    $scope.terminatorForm.successRate = "";
+                  
+                };  
+            });  
+        </script>
+
+<head>
+
+    <div class="container">
+        <body ng-app="SmsTerminator" ng-controller="SmsTerminatorController">
+        <img class="img-responsive" src="terminator-ui/logo.png" alt="Chania">
+
+        <h1>
+            SMS Terminators
+        </h1>
+        <form ng-submit="submitTerminator()">
+
+
+            <div class="form-group">
+                <label>Realm</label>
+                <input type="text" class="form-control" ng-model="terminatorForm.realm" />
+            </div>
+            <div class="form-group">
+                <label>Success Rate (%)</label>
+                <input type="text" class="form-control" ng-model="terminatorForm.successRate"  />
+            </div>
+
+
+            <button type="submit" class="btn btn-primary" >Submit</button>
+        </form>
+        <table class="table table-hover">
+            <tr>
+
+                <th>Realm</th>
+                <th>Success Rate (%)</th>
+
+
+            </tr>
+
+            <tr ng-repeat="terminator in terminators">
+
+                <td> {{ terminator.realm }}</td>
+                <td >{{ terminator.successRate }}</td>
+
+                <td><a ng-click="editTerminator(terminator)" class="btn btn-primary">Edit</a>
+                    <a ng-click="deleteTerminator(terminator)"  class="btn btn-primary">Delete</a></td>
+            </tr>
+
+        </table>
+
+
+
+
+
+        </body>
+    </div>
+</html>  
