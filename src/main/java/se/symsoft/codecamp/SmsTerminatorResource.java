@@ -75,6 +75,12 @@ public class SmsTerminatorResource {
     }
 
     @PUT
+    @ApiOperation(value = "Update SMS Terminator",
+            notes = "Update an existing SMS Terminator")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful operation", response = SmsResponse.class),
+            @ApiResponse(code = 404, message = "SMS terminator not found", response = SmsResponse.class)
+    })
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Logged
@@ -94,6 +100,12 @@ public class SmsTerminatorResource {
     }
 
     @DELETE
+    @ApiOperation(value = "Delete SMS Terminator",
+            notes = "Delete an existing SMS Terminator")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful operation", response = SmsResponse.class),
+            @ApiResponse(code = 404, message = "SMS terminator not found", response = SmsResponse.class)
+    })
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{id}")
     public void delete(@Suspended final AsyncResponse asyncResponse, @PathParam("id") UUID id) {

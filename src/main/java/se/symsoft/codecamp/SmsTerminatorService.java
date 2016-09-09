@@ -31,7 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class SmsTerminatorService extends ResourceConfig {
-
+    private static final int PORT = 8001;
     private static final String API_VERSION = "0.0.1";
     private Swagger swagger;
     private DynamoDBMapper dynamoDB;
@@ -49,9 +49,15 @@ public class SmsTerminatorService extends ResourceConfig {
     private HttpServer start() throws IOException {
         AmazonDynamoDBClient amazonDynamoDBClient = new AmazonDynamoDBClient().withRegion(Regions.EU_WEST_1);
         dynamoDB = new DynamoDBMapper(amazonDynamoDBClient);
-        initCache();
+        try {
+            initCache();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Failed to init cache from DynamoDB");
+        }
         initSwagger();
-        URI baseUri = UriBuilder.fromUri("http://0.0.0.0").port(8001).build();
+        Metrics.startGraphiteMetricsReporter();
+        URI baseUri = UriBuilder.fromUri("http://0.0.0.0").port(PORT).build();
         HttpServer server = GrizzlyHttpServerFactory.createHttpServer(baseUri, this);
         server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandler(SmsTerminatorService.class.getClassLoader(), "web/"),"/terminator-ui");
 
@@ -60,6 +66,7 @@ public class SmsTerminatorService extends ResourceConfig {
         server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandler(SmsTerminatorService.class.getClassLoader(), "swagger/css/"), "/css");
 
         server.start();
+        System.out.println("Server started on port + "+ PORT);
         return  server;
     }
 

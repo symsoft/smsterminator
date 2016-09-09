@@ -70,7 +70,11 @@
         <!-- https://mvnrepository.com/artifact/com.amazonaws/amazon-kinesis-client -->
 
 
-
+        <dependency>
+            <groupId>io.dropwizard.metrics</groupId>
+            <artifactId>metrics-graphite</artifactId>
+            <version>3.1.2</version>
+        </dependency>
 
 
 

@@ -41,7 +41,7 @@ public class SmsDeliverResource {
     @ApiOperation(value = "Deliver SMS",
             notes = "Deliver an SMS to the Terminator")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful operation", response = SmsResponse.class) })
+            @ApiResponse(code = 200, message = "Successful operation") })
     @Logged
     public void deliver(@Context Application app, @Suspended final AsyncResponse asyncResponse,
                         @PathParam("realm")
@@ -49,6 +49,7 @@ public class SmsDeliverResource {
                         String realm,
                         @ApiParam(value = "Attributes of SMS to be delivered", required = true) SmsSubmit data) throws URISyntaxException {
         try {
+            Metrics.METRIC_REGISTRY.counter(realm).inc();
             TerminatorData terminatorData = ((SmsTerminatorService) app).getTerminatorData(realm);
             if (terminatorData == null) {
                 asyncResponse.resume(new NotFoundException("Realm " + realm + "does not exist"));
@@ -67,6 +68,10 @@ public class SmsDeliverResource {
     }
 
     @GET
+    @ApiOperation(value = "Ping",
+            notes = "Operation that can be used to check health of the service")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful operation", response = String.class) })
     @Path("ping")
     public void ping(@Suspended final AsyncResponse asyncResponse) {
         asyncResponse.resume("Pong");
